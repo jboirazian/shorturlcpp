@@ -1,9 +1,6 @@
 # shorturlcpp
 A tinyurl dashboard that uses C++ and HTMX 
 
-## Overview
-
-ShortURLCPP is a simple C++ program that shortens URLs using the TinyURL API.
 
 ## Prerequisites
 
