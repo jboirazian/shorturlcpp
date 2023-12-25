@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!DOCTYPE html>
+    <html lang="en">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Arial', sans-serif;
+            }
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .link {
+                background-color: #D6EAF8;
+                /* Pastel Blue */
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                font-size: 18px;
+                color: #2C3E50;
+                /* Dark Gray */
+                transition: background-color 0.3s ease;
+                border: 2px solid #3498DB;
+                /* Border Color */
+                margin-bottom: 20px;
+            }
+
+            .link:hover {
+                background-color: #AED6F1;
+                /* Lighter Blue on Hover */
+            }
+
+            .link label {
+                font-size: 14px;
+                color: #34495E;
+                /* Dark Blue-Gray */
+            }
+
+            @media (min-width: 768px) {
+                .dashboard {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+        </style>
+        <title>ShorturlCpp</title>
+    </head>
+
+<body onload="loadLinks()">
+    <div class="dashboard" id="linksContainer">
+        <!-- Links will be dynamically added here -->
+    </div>
+
+    <script>
+        function loadLinks() {
+            // Make an initial request to fetch data from the /tinyurl endpoint
+            fetch('/links/tinyurl')
+                .then(response => response.text())
+                .then(data => {
+                    // Parse the data
+                    var linksArray = data.split(';').filter(Boolean);
+
+                    // Create links dynamically
+                    for (var i = 0; i < linksArray.length; i++) {
+                        createLinkElement(linksArray[i]);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function createLinkElement(label) {
+            // Create a new link element
+            var linkElement = document.createElement('div');
+            linkElement.className = 'link';
+
+            // Set the label
+            var labelElement = document.createElement('label');
+            labelElement.textContent = label;
+            linkElement.appendChild(labelElement);
+
+            // Add a placeholder for content
+            var contentElement = document.createElement('p');
+            contentElement.textContent = 'waiting...';
+            linkElement.appendChild(contentElement);
+
+            // Make a request to the specific endpoint for each link
+            var endpoint = '/tinyurl/' + label;
+
+            // Use hx-trigger to manually trigger the content update
+            linkElement.setAttribute('hx-trigger', 'customEvent');
+            linkElement.addEventListener('customEvent', function () {
+                // Fetch the data and update the content
+                fetch(endpoint)
+                    .then(response => response.text())
+                    .then(data => {
+                        contentElement.textContent = data;
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            });
+
+            // Trigger the content update on link creation
+            linkElement.dispatchEvent(new Event('customEvent'));
+
+            // Add the link to the container
+            document.getElementById('linksContainer').appendChild(linkElement);
+        }
+    </script>
+</body>
+
+</body>
+
+
+</html>
