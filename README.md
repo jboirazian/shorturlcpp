@@ -40,4 +40,4 @@ Once the program is built and the token is set, run the executable:
 ./shorturlcpp
 ```
 
-This will execute the ShortURLCPP program and use the TinyURL API to shorten a URL
+After that go to http://localhost:9090 
